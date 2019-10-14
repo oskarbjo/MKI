@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 echarge = 1.602e-19
 
 def beamCurrentGauss(nB,tBL,tBS):
-    
+      
     
     try:
         [fPos,ySpecPos]=loadSpectrumFromFile(nB, tBL, tBS)
