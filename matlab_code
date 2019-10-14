@@ -1,0 +1,147 @@
+
+f = data(:,1);
+QL = data(:,2);
+S21db = data(:,3);
+
+% choose 0 for the outer conductor loss increase since that's what we want
+% to measure...
+rho = 17.24e-9; % copper resisitivity [Ohm*m] at 20 degrees celsius, 17.5e-9 according to Fontolliet, 17.24 according to altes taschenbuch der hf
+% resistivity values in literature between 1.5% (altes taschenbuch der hf)
+% and 4% lower (web) the given by fontolliet
+rho_oc = 1/3.3e7; % resistivity of outer conductor [Ohm*m], alu
+
+% element geometry
+D = 0.045; % pipe diameter [m], from LHC design report 38 mm, plus a bit...
+% D = 0.08; % pipe diameter [m], 
+% d = 0.008; % wire diameter [m]
+% d = 0.0005; % wire diameter [m]
+d = 0.0005; % wire diameter [m]
+% HERE should be the length of the wire only; error of about 5 % in Z but
+Lwire = 3.551; % length of wire [m] measured at ends of  N connectors pins, ESTIMATED; before 1.1 m 
+Lcomponent = 3.55; % length of element itself [m], ESTIMATED
+
+Z0 = 60*log(D/d); % characteristic impedance of coax line
+% Z0 = 263; % s-band waveguide 72x34 mm^2 with 0.5 mm diameter wire
+% Z0 = 303; % square box with 72 mm sides and 0.5 mm wire, sum mode
+% Z0 = 550; % square box with 72 mm sides and 0.5 mm wire, delta mode
+% Z0 = 136.5; % 8 mm diameter copper tubes in box with 72 mm sides
+% D = d*exp(Z0/60);
+
+S21 = linv(S21db);
+
+% coupling coefficient
+k = S21./(1-S21);
+
+% unloaded quality factor
+Q0 = QL .* (1+k);
+
+% measured attenuation [dB/m]
+alpha_m = 8.686*pi*f./(c0*Q0);
+
+% skin depth [m]
+skin_depth = skin(f,1/rho); 
+
+% finite skin depth correction for small frequencies according to altes
+% taschenbuch der hf, page 10, valid for copper for d>4*skindepth => f>2e5 Hz
+skin_corr = (d+skin_depth)/d; % 
+
+% line attenuation of copper [dB/m]
+alpha_c = skin_corr * 8.686 .* sqrt(pi*e0*rho*f) / log(D/d) * ((1/d) + (1/D)*sqrt(rho/rho_oc)); % Fontolliet
+
+% low frequency resistance [Ohms] of inner conductor -> altes taschenbuch der hf, seite 10
+R0 = 4*Lwire*rho/(pi*d^2);
+
+% high frequency resistance [Ohms] of inner conductor
+R = R0*d./(4*skin_depth).*skin_corr;
+
+titlestr = [strrep(filename,'_','\_')];
+
+if 0 % Quality factor
+if ~hold_plot, figure('name',[filename ' - Q']), end
+plot(f/1e6,QL,'b*-')
+    xlabel('Frequency [GHz]')
+    ylabel('Unloaded Q factor')
+    grid on
+    title([titlestr])
+end
+
+if 0 % attenuation    
+    what2plot = ''; % plot 'diff' or 'ratio' of measured and calcuated attenuation
+figure('name',[filename ' - attenuation'])
+if ~isempty(what2plot)
+    subplot(2,1,1) % measured attenuation and calculated wire attenuation
+end
+%     if ~hold_plot, hold off, end
+    plot(f/1e6,alpha_m,'b*-')
+    hold on
+    plot(f/1e6,alpha_c,'rs-')
+    xlabel('Frequency [MHz]')
+    ylabel('Attenuation [dB/m]')
+    grid on
+    title([titlestr])
+    legend('Measured attenuation','Wire attenuation',2)
+if ~isempty(what2plot)
+subplot(2,1,2) % difference between measured attenuation and calculated wire attenuation
+%     if ~hold_plot, hold off, end
+    switch what2plot
+        case 'diff'
+            plot(f/1e6,(alpha_m-alpha_c),'g*-')
+            legend('Difference',2)
+        case 'ratio'
+            plot(f/1e6,(alpha_m./alpha_c),'g*-')
+            legend('Ratio',2)
+    end
+    hold on
+    xlabel('Frequency [MHz]')
+    ylabel('Attenuation [dB/m]')
+    grid on
+    title([titlestr])
+end
+end
+
+% Theoretical values for impedance [Sacherer 1979]
+b = 0.036*1.2; % pipe radius [m], approximatively for square pipe
+x0 = 0.0; % displacement of one single wire [m]
+rho_pipe = 1/3.3e7; % conductivity of pipe (aluminium)
+
+skin_pipe = skin(f,1/rho_pipe);
+ZL = Lcomponent*rho_pipe./skin_pipe / (2*pi*b) * (1+2*(x0/b)^2);
+ZT = 2*c0./(2*pi*f*b^2) .* ZL;
+
+% Measured values
+Z = R.*(alpha_m-alpha_c)./alpha_c;
+save nofer
+plot_trans = 1;
+if plot_trans
+    Zmeas = 2*c0./(2*pi*f*b^2) .* Z;
+    Ztheo = ZT;
+else
+    Zmeas = Z;
+    Ztheo = ZL;
+end
+
+if 0    % Impedance of component [Ohm]
+    if hold_plot 
+        hold on
+    else
+        figure('name',[filename ' - Z'])
+    end
+    plot(f/1e6,Zmeas,'m*-')
+    hold on
+    plot(f/1e6,Ztheo,'kd-')
+    plot(f/1e6,Zmeas./Ztheo,'gs-')
+    drag
+    
+    xlabel('Frequency [MHz]')
+    ylabel('Re\{Z\} [\Omega]')
+    grid on
+    title([titlestr])
+    traces = get(gca,'children');
+    tracelabel = [strrep(filename,'_','\_')];
+%     set(traces(1),'displayname',tracelabel); % write label to current trace
+%     legend off  % refresh legend
+%     legend('show')
+%     colors = ['b'; 'r'; 'g'; 'k'; 'c'; 'm'];
+%     linecolor = colors(mod(length(traces),length(colors))+1);
+%     set(traces(1),'color',linecolor) % new linestyle for new trace, cycle
+end
