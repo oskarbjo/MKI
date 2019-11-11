@@ -2,16 +2,16 @@ import functions
 import numpy as np
 from scipy import interpolate
 import matplotlib.pyplot as plt
-#impFile=r"\\cernbox-smb.cern.ch\eos\user\o\objorkqv\Documents\CST_EOS\mkiPostLS1_2000MHz_results_mostContributingf0\mkiPostLS1_imp.txt" #Remember to remove impedance file header
+# impFile=r"\\cernbox-smb.cern.ch\eos\user\o\objorkqv\Documents\CST_EOS\mkiPostLS1_2000MHz_results_mostContributingf0\mkiPostLS1_imp.txt" #Remember to remove impedance file header
 #impFile=r'C:\Users\objorkqv\cernbox\Documents\Python\MKI workspace\MKI powerloss\data/MKI_PostLS1_impedance.txt' #Remember to remove impedance file header
 #impFile=r'C:\Users\objorkqv\cernbox\Documents\Python\MKI workspace\MKI powerloss\data/MKI_upgraded_impedance.txt' #Remember to remove impedance file header
-impFile=r'C:\Users\objorkqv\cernbox\Documents\Python\MKI workspace\MKI powerloss\data/MKI_cool_impedance.txt' #Remember to remove impedance file header
+# impFile=r'C:\Users\objorkqv\cernbox\Documents\Python\MKI workspace\MKI powerloss\data/MKI_cool_impedance.txt' #Remember to remove impedance file header
 #impFile = r'E:\CST\MKIcool\MKIcool remeshed\15mm insert_IMPEDANCE SIMULATION/MKIcool_impedance_REMESHED.txt'
 #impFile=r'E:\CST\MKIcool\MKIcool remeshed\Damper optimization\simulated files\10mm/MKIcool_10mm_impedance.txt'
 #impFile = r"E:\CST\MKIcool\MKIcool remeshed\Damper optimization\simulated files\20mm\MKIcool_20mm_inset_imp.txt"
 #impFile=r'E:\CST\MKIcool\MKIcool remeshed\Insert design suggestion\design1/insert_design1_impedance.txt'
 #impFile = r'E:\CST\MKIcool\MKIcool remeshed\Insert design suggestion\design2/insert_design2_imp.txt'
-#impFile = r"C:\Users\objorkqv\cernbox\Documents\Measurements\MKI cool\MKI cool resonant measurements\resonant_impedance_from_python_script.txt"
+impFile = r"C:\Users\objorkqv\cernbox\Documents\Measurements\MKI cool\MKI cool resonant measurements\resonant_impedance_from_python_script.txt"
 
 echarge=1.602e-19
 N = 2.2e11             #Nominal for current LHC: 1.15
@@ -31,8 +31,8 @@ for i in range(0,np.size(pLoss_spect)):
 fInt1 = fInt
 YInt1 = YInt
 zInt1 = zInt
-
-
+ 
+ 
 [mostContributingf0, mostContributingf0_index, fInt, pLoss_spect, spectSqr, zInt] = functions.findMostContributingf0(ySpecPos,fPos, impFile, iB)
 loss_v_f_11khz_SELECTED = []
 npts = 50

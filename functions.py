@@ -259,7 +259,7 @@ def T_vs_tBL_and_N(P_mat,P_losses,T_losses):
     return T_mat
 
 def RFLosses_spect(f0,iB,ySpecPos,fPos,impFile):
-    
+    #FIRST DATA POINT IN IMPEDANCE FILE MUST BE AT f=0
     [fImp,zImp] = importImpedanceData(impFile)
     
     fMin = fImp[0]
@@ -278,7 +278,7 @@ def RFLosses_spect(f0,iB,ySpecPos,fPos,impFile):
     zInt = z_temp(fInt)
     
     temp = np.multiply((np.square(YInt)),zInt)
-    pLoss = 2*np.square(iB)*np.sum(temp[0:]) #should it be from second element? Don't include DC?
+    pLoss = 2*np.square(iB)*np.sum(temp[0:]) 
     pLoss_spect = 2*np.square(iB)*temp[0:]
     spectSqr = (np.square(YInt))
     return [pLoss, fInt, pLoss_spect, spectSqr, zInt, YInt]
@@ -344,6 +344,7 @@ def linearInterp(x1,x2,y1,y2,yTarget):
     x = (yTarget - m)/k
     return x
 
+    
 class SNPfile:
     def __init__(self,filePath):
         self.S11lin = []

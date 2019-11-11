@@ -16,7 +16,8 @@ def skin(f):
     skinD = np.sqrt(1/(np.pi*f*mu0*gamma))
     return skinD
 
-def main():
+
+def calculateResonantImpedance():
     filepath = r"C:\Users\objorkqv\cernbox\Documents\Measurements\MKI cool\MKI cool resonant measurements\MKIcool_resonant_1600pts"
     
     data = np.loadtxt(filepath, comments='"', delimiter=',')
@@ -62,20 +63,27 @@ def main():
     R0 = 4*Lwire*rho/(np.pi*d*d)
     R = R0*d/(4*skin_depth)*skin_corr
     
-    Z = R*(alpha_m-alpha_c)/alpha_c # Real part of longitudinal impedance
+    Z = R*(alpha_m-alpha_c)/alpha_c # Real part of longitudinal impedance    
     
+    return [f,Z]
+
+
+def main():    
+    [f,Z] = calculateResonantImpedance()
     [f1,R1]=functions.importImpedanceData(r'C:\Users\objorkqv\cernbox\Documents\Python\MKI workspace\MKI powerloss\data/MKI_cool_impedance.txt')
+    [f2,R2]=functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\Original MKIcool_redrawn\simulated\origina_MKIcool_redrawn_impedance.txt")
     plt.figure()
     plt.plot(f,Z)
     plt.plot(f1,R1)
+    plt.plot(f2,R2)
     plt.grid()
     plt.ylabel('Impedance [Ohms]')
     plt.xlabel('Frequency [GHz]')
     plt.title('MKI cool longitudinal impedance')
-    plt.legend(['Resonant measurement','Wakefield simulation'])
+    plt.legend(['Resonant measurement','Wakefield simulation','Redrawn wakefield simulation'])
     plt.show()
-    
 
 
 if __name__ == "__main__":
     main()
+    

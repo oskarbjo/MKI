@@ -1,3 +1,7 @@
+### Loads a touchstone S2P file into np arrays
+
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 path = r'C:\Users\objorkqv\cernbox\Documents\Python\MKI workspace\MKI powerloss\data/HELIAXWBPMSY4L5.s2p'
@@ -19,6 +23,7 @@ class SNPfile:
         self.S22angle = []
         path = filePath
         self.extractSParamData(filePath)
+        self.getImpulseResponse()
         
     def extractSParamData(self,filePath):
         file=open(filePath,'r')
@@ -56,6 +61,9 @@ class SNPfile:
     def dBtoLin(self,dBdata):
         linData = np.power(10,dBdata/20)
         return linData
+        
+    def getImpulseResponse(self):
+        self.s21_impulse = np.fft.ifft(self.S22lin)
         
         
 def main():
