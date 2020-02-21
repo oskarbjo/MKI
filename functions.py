@@ -4,8 +4,8 @@ from scipy import interpolate
 import matplotlib.pyplot as plt
 echarge = 1.602e-19
 
+
 def beamCurrentGauss(nB,tBL,tBS):
-      
     
     try:
         [fPos,ySpecPos]=loadSpectrumFromFile(nB, tBL, tBS)
@@ -39,8 +39,6 @@ def beamCurrentGauss(nB,tBL,tBS):
 
 def beamSpec(t,y):
 
-    #sampling interval of the signal is the inverse of the sampling frequency
-    #and also the maximum frequency that can be found from the FFT
     fS = 1/(t[2]-t[1])
     
     
@@ -120,9 +118,11 @@ def loadSpectrumFromFile(nB,tBL,tBS):
     filepath = '//cernbox-smb.cern.ch/eos/user/o/objorkqv/Documents/Python/BEAM_SPECTRUM_DATA/'
     filename_freq = 'freq_beamSpectrum_' + str(nB) + 'bunches_' + txt1 + 'bunchLength_25nsbunchSeparation.dat'
     filename_spec = 'spec_beamSpectrum_' + str(nB) + 'bunches_' + txt1 + 'bunchLength_25nsbunchSeparation.dat'
-    print('File found: ' + filepath+filename_freq)
+
     fPos = np.load(filepath + filename_freq,allow_pickle=True)
     ySpecPos = np.load(filepath + filename_spec,allow_pickle=True)
+    print('File found: ' + filepath+filename_freq)
+
     return [fPos,ySpecPos]
 
 def tBL_and_N_sweep(nB,tBS,f0,impFile):
@@ -285,8 +285,7 @@ def RFLosses_spect(f0,iB,ySpecPos,fPos,impFile):
 
 
 
-def findMostContributingf0(beamSpect,spectFreq, impFile, iB):
-    f0 = 11245
+def findMostContributingf0(beamSpect,spectFreq, impFile, iB, f0):
     [pLoss, fInt, pLoss_spect, spectSqr, zInt, YInt] = RFLosses_spect(f0, iB, beamSpect, spectFreq, impFile)
     
     mostContributingf0_index = sorted(range(len(pLoss_spect)),key=lambda k: pLoss_spect[k]) #find indices of most contributing frequencies
@@ -344,6 +343,26 @@ def linearInterp(x1,x2,y1,y2,yTarget):
     x = (yTarget - m)/k
     return x
 
+def SPS4batchBeam(nB, tBL, tBS):
+        # SPS 4 batch fill:
+    beam1 = beamCurrentGauss(nB, tBL, tBS)
+    beam2 = np.zeros(round(len(beam1[1][:])/72)*8)
+    beam3 = np.concatenate((beam1[1][:],beam2))
+    beam4 = np.concatenate((beam3,beam3))
+    beam5 = np.concatenate((beam4,beam4))
+    beam6 = np.zeros(round(len(beam1[1][:])/72)*612)
+    beam7 = np.concatenate((beam5,beam6))
+    
+    t1 = np.linspace(0,25*925e-9,len(beam7))
+    t2 = np.linspace(0,2*25*80e-9,len(beam4))
+    
+    
+    plt.figure()
+    plt.plot(t2-2.53e-9,beam4)
+    
+    [fPos,ySpecPos] = beamSpec(t1,beam7)
+    
+    return [fPos,ySpecPos]
     
 class SNPfile:
     def __init__(self,filePath):
@@ -399,3 +418,4 @@ class SNPfile:
     def dBtoLin(self,dBdata):
         linData = np.power(10,dBdata/20)
         return linData
+    

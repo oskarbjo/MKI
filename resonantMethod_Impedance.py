@@ -17,8 +17,8 @@ def skin(f):
     return skinD
 
 
-def calculateResonantImpedance():
-    filepath = r"C:\Users\objorkqv\cernbox\Documents\Measurements\MKI cool\MKI cool resonant measurements\MKIcool_resonant_1600pts"
+def calculateResonantImpedance(filepath):
+    
     
     data = np.loadtxt(filepath, comments='"', delimiter=',')
     
@@ -69,21 +69,55 @@ def calculateResonantImpedance():
 
 
 def main():    
-    [f,Z] = calculateResonantImpedance()
-    [f1,R1]=functions.importImpedanceData(r'C:\Users\objorkqv\cernbox\Documents\Python\MKI workspace\MKI powerloss\data/MKI_cool_impedance.txt')
-    [f2,R2]=functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\Original MKIcool_redrawn\simulated\origina_MKIcool_redrawn_impedance.txt")
-    plt.figure()
-    plt.plot(f,Z)
-    plt.plot(f1,R1)
-    plt.plot(f2,R2)
-    plt.grid()
-    plt.ylabel('Impedance [Ohms]')
-    plt.xlabel('Frequency [GHz]')
-    plt.title('MKI cool longitudinal impedance')
-    plt.legend(['Resonant measurement','Wakefield simulation','Redrawn wakefield simulation'])
+#     filepath = r"C:\Users\objorkqv\cernbox\Documents\Measurements\MKI cool\MKI cool resonant measurements\MKIcool_resonant_1600pts"
+#     [f,Z] = calculateResonantImpedance(filepath)
+#     filepath2 = r"F:\MKIcool\Modified MKI cool measurement\MKI_modified.txt"
+#     [f0,Z0] = calculateResonantImpedance(filepath2)
+#     [f1,R1]=functions.importImpedanceData(r'C:\Users\objorkqv\cernbox\Documents\Python\MKI workspace\MKI powerloss\data/MKI_cool_impedance.txt')
+#     [f2,R2]=functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\Original MKIcool_redrawn\simulated\initial/origina_MKIcool_redrawn_impedance.txt")
+#     [f3,R3]=functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\Original MKIcool_redrawn\simulated\improved\MKIcool_redrawn_improved_impedance.txt")
+#     [f4,R4]=functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\Original MKIcool_redrawn\simulated\with metal ring\long_impedance.txt")
+#     [f5,R5]=functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\Alumina tube reduced epsilon\simulated\MKIcool_reduced_epsilon_impedance.txt")
+#     [f6,R6]=functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\Original MKIcool_redrawn\simulated\fixed_negative_impedance\MKIcool_fixed_negative_impedance.txt")
+#     plt.figure(num=None, figsize=(9, 5), dpi=140, facecolor='w', edgecolor='k')
+# #     plt.plot(f/1e9,Z)
+# #     plt.plot(np.array(f)/1e9,Z)
+# #     plt.plot(np.asarray(f1)/1e9,R1)
+#     plt.plot(f0/1e9,Z0)
+#     plt.plot(np.asarray(f5)/1e9,R5)
+#     plt.plot(np.asarray(f6)/1e9,R6)
+# #     plt.plot(f3,R3)
+#     plt.grid()
+#     plt.ylabel('Impedance [Ohms]')
+#     plt.xlabel('Frequency [GHz]')
+#     plt.title('MKI cool longitudinal impedance')
+#     plt.legend(['Measurement','Simulation (epsilon = 7.5)','Simulation (epsilon = 10)'])
+    WLstudy()
     plt.show()
 
 
+def WLstudy():
+#     [f0,R0] = functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\MKIcool_redrawn_WL_study\impedance curves\100m.txt")
+#     [f1,R1] = functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\MKIcool_redrawn_WL_study\impedance curves\150m.txt")
+#     [f2,R2] = functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\MKIcool_redrawn_WL_study\impedance curves\200m.txt")
+#     [f3,R3] = functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\MKIcool_redrawn_WL_study\impedance curves\250m.txt")
+
+
+    [f0,R0] = functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\MKIcool_redrawn_WL_study\impedance curves\250m.txt")
+    [f1,R1] = functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\MKIcool endcap study\64mm\simulated\impedance_64mm_endcap_hole.txt")
+    [f2,R2] = functions.importImpedanceData(r"E:\CST\MKIcool\MKIcool_redrawn\MKIcool endcap study\68mm\simulated\impedance_68mm_endcap_hole.txt")
+    
+    plt.figure(num=None, figsize=(10, 6), dpi=140, facecolor='w', edgecolor='k')
+    plt.plot(np.asarray(f0)/1e6,R0)
+    plt.plot(np.asarray(f1)/1e6,R1)
+    plt.plot(np.asarray(f2)/1e6,R2)
+#     plt.plot(np.asarray(f3)/1e6,R3)
+    plt.legend(['Original cutout (60 mm)','64 mm','68 mm'])
+    plt.grid()
+    plt.ylabel('Impedance [Ohms]')
+    plt.xlabel('Frequency [MHz]')
+    
+    
 if __name__ == "__main__":
     main()
     
