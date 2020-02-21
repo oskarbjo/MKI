@@ -108,11 +108,11 @@ def writeANSYSDataSet():
 	######## USER INPUT ############
 	
 	#Impedance file (remove header!)
-	impFile = r"E:\CST\MKIcool\MKIcool_redrawn\MKIcool endcap study\64mm\impedance.txt"
+	impFile = r"E:\CST\MKIcool\MKIcool_redrawn\MKI cool redrawn MASTER 3D loss monitors\simulated\impedance.txt"
 	#Loss monitor frequencies:
 	freq = np.load(r"E:\CST\MKIcool\MKIcool_redrawn\MKI cool redrawn MASTER 3D loss monitors\simulated\mostContrFreq.npy")
 	#Loss monitor 3D data:
-	path = r'E:\CST\MKIcool\MKIcool_redrawn\MKIcool endcap study\64mm\simulated\MKIcool_endcap_64mm\Export\3d/'
+	path = r'E:\CST\MKIcool\MKIcool_redrawn\MKI cool redrawn MASTER 3D loss monitors\simulated\MKIcool_redrawn_MASTER_3Dloss\Export\3d/'
 	
 	#Beam spectrum data:
 	#SPS:
@@ -143,13 +143,13 @@ def writeANSYSDataSet():
 	dV = np.power(0.001*(positionMatrix[0,1]-positionMatrix[0,0]),3) #volume element
 	totalDataMatrix = totalDataMatrix/dV #Make unit W/m3
 	totalDataMatrix = np.transpose(totalDataMatrix)
-	writeLossDataToFile(positionMatrix,totalDataMatrix,r'E:\CST\MKIcool\MKIcool_redrawn\MKIcool endcap study\64mm\ansys_dataset/MKI_64mm_endcap.txt')
+	writeLossDataToFile(positionMatrix,totalDataMatrix,r'E:\CST\MKIcool\MKIcool_redrawn\MKI cool redrawn MASTER 3D loss monitors\ANSYS data/XXX.txt')
 
 
 
 def main():
-# 	readANSYSDataSet("E:\CST\MKIcool\MKIcool_redrawn\MKI cool redrawn MASTER 3D loss monitors\ANSYS data\MKI_redrawn.txt")
-	writeANSYSDataSet()
+	readANSYSDataSet("E:\CST\MKIcool\MKIcool_redrawn\MKI cool redrawn MASTER 3D loss monitors\ANSYS data\MKI_redrawn.txt")
+# 	writeANSYSDataSet()
 
 if __name__ == "__main__":
     main()
